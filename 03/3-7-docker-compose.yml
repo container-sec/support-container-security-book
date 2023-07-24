@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  app:
+    image: hashicorp/http-echo
+    command: ["-text", "hello"]
+    ports:
+    - 5678:5678
+  victim:
+    image: curlimages/curl:latest
+    command: ["sh", "-c", "while true; do curl -s -w '%{http_code}¥n' -o /dev/null http://app:5678; sleep 1; done"]
+  attacker:
+    image: ubuntu:latest
+    command: ["tail", "-f", "/dev/null"]
