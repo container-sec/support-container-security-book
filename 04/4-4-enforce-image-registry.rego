@@ -22,7 +22,8 @@ allowed_registries = ["hub.example.com"]
 deny[msg] {
   op := input.Stages[_].Commands[_]
   op.Cmd == "from"
-  not startswith(op.Value[x], allowed_registries[x])
+  satisfied := [good | repo = allowed_registries[_] ; good = startswith(op.Value[_], repo)]
+  not any(satisfied)
   msg := sprintf("This image registry is forbidden: %s", [op.Value[x]])
 }
 
